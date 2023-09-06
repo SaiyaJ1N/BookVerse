@@ -4,10 +4,7 @@ import com.onlinebookshop.dto.book.BookSearchParameters;
 import com.onlinebookshop.model.Book;
 import com.onlinebookshop.repository.SpecificationBuilder;
 import com.onlinebookshop.repository.SpecificationProviderManager;
-import com.onlinebookshop.repository.book.specification.AuthorSpecificationProvider;
-import com.onlinebookshop.repository.book.specification.PriceSpecificationProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
