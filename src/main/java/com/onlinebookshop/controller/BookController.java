@@ -1,7 +1,8 @@
 package com.onlinebookshop.controller;
 
-import com.onlinebookshop.dto.BookDto;
-import com.onlinebookshop.dto.CreateBookRequestDto;
+import com.onlinebookshop.dto.book.BookDto;
+import com.onlinebookshop.dto.book.BookSearchParameters;
+import com.onlinebookshop.dto.book.CreateBookRequestDto;
 import com.onlinebookshop.service.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,10 @@ public class BookController {
     @PostMapping
     public BookDto createBook(@RequestBody CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
+    }
+
+    @GetMapping("/search")
+    public List<BookDto> search(BookSearchParameters searchParameters) {
+        return bookService.search(searchParameters);
     }
 }

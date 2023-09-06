@@ -1,16 +1,19 @@
 package com.onlinebookshop.service.impl;
 
-import com.onlinebookshop.dto.BookDto;
-import com.onlinebookshop.dto.CreateBookRequestDto;
+import com.onlinebookshop.dto.book.BookDto;
+import com.onlinebookshop.dto.book.BookSearchParameters;
+import com.onlinebookshop.dto.book.CreateBookRequestDto;
 import com.onlinebookshop.exception.EntityNotFoundException;
 import com.onlinebookshop.mapper.BookMapper;
 import com.onlinebookshop.model.Book;
-import com.onlinebookshop.repository.BookRepository;
+import com.onlinebookshop.repository.book.BookRepository;
+import com.onlinebookshop.repository.book.BookSpecificationBuilder;
 import com.onlinebookshop.service.BookService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -50,5 +54,13 @@ public class BookServiceImpl implements BookService {
         Book updatedBook = bookMapper.toModel(params);
         updatedBook.setId(id);
         return bookMapper.toDto(bookRepository.save(updatedBook));
+    }
+
+    @Override
+    public List<BookDto> search(BookSearchParameters params) {
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(bookSpecification).stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 }
