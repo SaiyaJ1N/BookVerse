@@ -1,2 +1,8 @@
-package com.onlinebookshop.dto.user;public class UserLoginResponseDto {
+package com.onlinebookshop.dto.user;
+
+import lombok.Data;
+
+@Data
+public class UserLoginResponseDto {
+    private String token;
 }

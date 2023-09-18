@@ -11,7 +11,7 @@ public class FieldMatchValidator
     @Override
     public boolean isValid(UserRegistrationRequestDto registrationRequest,
                            ConstraintValidatorContext constraintValidatorContext) {
-        return registrationRequest.getPassword().
-                equals(registrationRequest.getRepeatPassword());
+        return registrationRequest.getPassword()
+                .equals(registrationRequest.getRepeatPassword());
     }
 }
