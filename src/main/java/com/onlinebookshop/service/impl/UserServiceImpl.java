@@ -13,8 +13,9 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -29,12 +30,17 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("User with email: " + request.getEmail()
                     + "is already exists");
         }
+        User user = setUserFromRequest(request);
+        User savedUser = userRepository.save(user);
+        return userMapper.toResponseDto(savedUser);
+    }
+
+    private User setUserFromRequest(UserRegistrationRequestDto request) {
         User user = userMapper.toModel(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Set.of(roleRepository.getRoleByName(Role.RoleName.ROLE_USER)));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        User savedUser = userRepository.save(user);
-        return userMapper.toResponseDto(savedUser);
+        return user;
     }
 }

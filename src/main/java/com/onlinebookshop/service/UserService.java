@@ -5,7 +5,6 @@ import com.onlinebookshop.dto.user.UserRegistrationResponseDto;
 import com.onlinebookshop.exception.RegistrationException;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface UserService {
     UserRegistrationResponseDto register(UserRegistrationRequestDto requestDto)
                         throws RegistrationException;
