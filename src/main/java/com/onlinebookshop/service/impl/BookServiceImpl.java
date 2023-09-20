@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
