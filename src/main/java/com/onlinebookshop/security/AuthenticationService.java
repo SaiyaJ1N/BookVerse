@@ -21,6 +21,8 @@ public class AuthenticationService {
         );
 
         String token = jwtUtil.generateToken(requestDto.getEmail());
-        return null;
+        UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto();
+        userLoginResponseDto.setToken(token);
+        return userLoginResponseDto;
     }
 }
