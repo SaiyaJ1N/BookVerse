@@ -11,6 +11,4 @@ public interface CategoryMapper {
     Category toModel(CategoryRequestDto categoryRequestDto);
 
     CategoryResponseDto toResponseDto(Category category);
-
-    Category responseDtoToModel(CategoryResponseDto responseDto);
 }

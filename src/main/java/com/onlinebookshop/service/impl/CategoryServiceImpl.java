@@ -41,8 +41,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponseDto update(Long id, CategoryResponseDto requestDto) {
-        Category category = categoryMapper.responseDtoToModel(requestDto);
+    public CategoryResponseDto update(Long id, CategoryRequestDto requestDto) {
+        Category category = categoryMapper.toModel(requestDto);
         category.setId(id);
         return categoryMapper.toResponseDto(categoryRepository.save(category));
     }
