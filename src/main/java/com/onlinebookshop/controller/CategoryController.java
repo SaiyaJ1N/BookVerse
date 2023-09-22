@@ -71,6 +71,7 @@ public class CategoryController {
     @Operation(summary = "Get books by category id", description = "Get a list"
             + " of available books by category id")
     @GetMapping("/{id}/books")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
         return bookService.findAllByCategoryId(id);
     }
