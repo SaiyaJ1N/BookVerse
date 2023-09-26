@@ -2,10 +2,12 @@ package com.onlinebookshop.security;
 
 import com.onlinebookshop.dto.user.UserLoginRequestDto;
 import com.onlinebookshop.dto.user.UserLoginResponseDto;
+import com.onlinebookshop.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,5 +26,10 @@ public class AuthenticationService {
         UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto();
         userLoginResponseDto.setToken(token);
         return userLoginResponseDto;
+    }
+
+    public Long getUserId() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
     }
 }
