@@ -1,6 +1,7 @@
 package com.onlinebookshop.service.impl;
 
 import com.onlinebookshop.dto.book.BookDto;
+import com.onlinebookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.onlinebookshop.dto.book.BookSearchParameters;
 import com.onlinebookshop.dto.book.CreateBookRequestDto;
 import com.onlinebookshop.exception.EntityNotFoundException;
@@ -27,6 +28,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
         Book bookModel = bookMapper.toModel(requestDto);
+        bookModel.setCategories(bookMapper.toCategorySet(requestDto.getCategoriesId()));
         return bookMapper.toDto(bookRepository.save(bookModel));
     }
 
@@ -63,5 +65,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(bookSpecification).stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<BookDtoWithoutCategoryIds> findAllByCategoryId(Long id) {
+        return bookRepository.findAllByCategoriesId(id).stream()
+                .map(bookMapper::toDtoWithoutCategories)
+                .collect(Collectors.toList());
     }
 }

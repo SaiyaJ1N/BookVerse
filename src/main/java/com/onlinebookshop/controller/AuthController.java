@@ -7,6 +7,7 @@ import com.onlinebookshop.dto.user.UserRegistrationResponseDto;
 import com.onlinebookshop.exception.RegistrationException;
 import com.onlinebookshop.security.AuthenticationService;
 import com.onlinebookshop.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Auth controller", description = "Endpoints for managing authorization")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
