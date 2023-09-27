@@ -5,13 +5,16 @@ import com.onlinebookshop.dto.user.UserRegistrationResponseDto;
 import com.onlinebookshop.exception.RegistrationException;
 import com.onlinebookshop.mapper.UserMapper;
 import com.onlinebookshop.model.Role;
+import com.onlinebookshop.model.ShoppingCart;
 import com.onlinebookshop.model.User;
 import com.onlinebookshop.repository.role.RoleRepository;
+import com.onlinebookshop.repository.shoppingcart.ShoppingCartRepository;
 import com.onlinebookshop.repository.user.UserRepository;
 import com.onlinebookshop.service.ShoppingCartService;
 import com.onlinebookshop.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final ShoppingCartService shoppingCartService;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     public UserRegistrationResponseDto register(UserRegistrationRequestDto request)

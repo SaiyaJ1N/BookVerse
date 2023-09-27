@@ -12,11 +12,12 @@ import com.onlinebookshop.model.ShoppingCart;
 import com.onlinebookshop.model.User;
 import com.onlinebookshop.repository.cartitem.CartItemRepository;
 import com.onlinebookshop.repository.shoppingcart.ShoppingCartRepository;
+import com.onlinebookshop.security.AuthenticationService;
 import com.onlinebookshop.service.BookService;
 import com.onlinebookshop.service.ShoppingCartService;
+import jakarta.transaction.Transactional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,19 +28,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final BookService bookService;
     private final CartItemRepository cartItemRepository;
+    private final AuthenticationService authenticationService;
 
     @Override
+    @Transactional
     public ShoppingCartDto getShoppingCart() {
-        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(getCartOfCurrentUser());
-        shoppingCartDto.setCartItems(getCartOfCurrentUser().getCartItems().stream()
+        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(authenticationService.getCartOfCurrentUser());
+        shoppingCartDto.setCartItems(authenticationService.getCartOfCurrentUser().getCartItems().stream()
                 .map(cartItemMapper::toResponseDto)
                 .collect(Collectors.toSet()));
         return shoppingCartDto;
     }
 
     @Override
+    @Transactional
     public CartItemResponseDto addCartItem(CartItemRequestDto requestDto) {
-        ShoppingCart cart = getCartOfCurrentUser();
+        ShoppingCart cart = authenticationService.getCartOfCurrentUser();
         CartItem cartItem = new CartItem();
         cartItem.setShoppingCart(cart);
         cartItem.setBook(bookService.findBookById(requestDto.getBookId()));
@@ -52,9 +56,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public CartItemResponseDto updateCartItem(Long id, CartItemUpdateRequestDto updateRequestDto) {
         CartItem cartItem = cartItemRepository
-                .findCartItemByIdAndShoppingCartId(id, getCartOfCurrentUser().getId())
+                .findCartItemByIdAndShoppingCartId(id, authenticationService.getCartOfCurrentUser().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find item with id= " + id));
         cartItem.setQuantity(updateRequestDto.getQuantity());
         cartItem.setId(id);
@@ -72,12 +77,5 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setId(user.getId());
         shoppingCart.setUser(user);
         shoppingCartRepository.save(shoppingCart);
-    }
-
-    @Override
-    public ShoppingCart getCartOfCurrentUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        return shoppingCartRepository.findByUserId(user.getId());
     }
 }
