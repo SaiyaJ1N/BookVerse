@@ -33,8 +33,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     @Transactional
     public ShoppingCartDto getShoppingCart() {
-        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(authenticationService.getCartOfCurrentUser());
-        shoppingCartDto.setCartItems(authenticationService.getCartOfCurrentUser().getCartItems().stream()
+        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(authenticationService
+                .getCartOfCurrentUser());
+        shoppingCartDto.setCartItems(authenticationService
+                .getCartOfCurrentUser().getCartItems().stream()
                 .map(cartItemMapper::toResponseDto)
                 .collect(Collectors.toSet()));
         return shoppingCartDto;
@@ -59,7 +61,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public CartItemResponseDto updateCartItem(Long id, CartItemUpdateRequestDto updateRequestDto) {
         CartItem cartItem = cartItemRepository
-                .findCartItemByIdAndShoppingCartId(id, authenticationService.getCartOfCurrentUser().getId())
+                .findCartItemByIdAndShoppingCartId(id,
+                        authenticationService.getCartOfCurrentUser().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find item with id= " + id));
         cartItem.setQuantity(updateRequestDto.getQuantity());
         cartItem.setId(id);

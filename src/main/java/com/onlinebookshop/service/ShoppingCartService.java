@@ -4,7 +4,6 @@ import com.onlinebookshop.dto.cartitem.CartItemRequestDto;
 import com.onlinebookshop.dto.cartitem.CartItemResponseDto;
 import com.onlinebookshop.dto.cartitem.CartItemUpdateRequestDto;
 import com.onlinebookshop.dto.shoppingcart.ShoppingCartDto;
-import com.onlinebookshop.model.ShoppingCart;
 import com.onlinebookshop.model.User;
 
 public interface ShoppingCartService {
