@@ -41,4 +41,8 @@ public class AuthenticationService {
                 .getPrincipal();
         return shoppingCartRepository.findByUserId(user.getId());
     }
+
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 }
