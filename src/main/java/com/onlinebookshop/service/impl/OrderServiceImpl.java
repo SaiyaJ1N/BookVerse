@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,11 +50,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(Order.Status.PENDING);
-        order.setTotal(shoppingCart.getCartItems().stream()
-                .map(cartItem -> cartItem.getBook()
-                        .getPrice()
-                        .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
-                .reduce(BigDecimal.valueOf(0), BigDecimal::add));
+        order.setTotal(calculateOrderTotal(shoppingCart));
         order.setShippingAddress(requestDto.getShippingAddress());
         Order savedOrder = orderRepository.save(order);
         savedOrder.setOrderItems(shoppingCart.getCartItems().stream()
@@ -65,9 +62,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderItemResponseDto> getAllOrderItemsByOrderId(Long id, Pageable pageable) {
+    public List<OrderItemResponseDto> getAllOrderItemsByOrderId(Long id, Pageable pageable,
+                                                                Authentication authentication) {
         Order order = orderRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("Can`t find order by id: " + id));
+        User user = (User) authentication.getPrincipal();
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Current user does not have order by id: " + id);
+        }
         return order.getOrderItems().stream()
                 .map(orderItemMapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -95,5 +97,13 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveOrderItemToDb(OrderItem orderItem) {
         orderItemRepository.save(orderItem);
+    }
+
+    private BigDecimal calculateOrderTotal(ShoppingCart shoppingCart) {
+        return shoppingCart.getCartItems().stream()
+                .map(cartItem -> cartItem.getBook()
+                        .getPrice()
+                        .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal.valueOf(0), BigDecimal::add);
     }
 }

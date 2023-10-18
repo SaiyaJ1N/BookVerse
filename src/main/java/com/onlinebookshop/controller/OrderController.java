@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +49,9 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{orderId}/items")
     public List<OrderItemResponseDto> getAllOrderItemsByOrderId(@PathVariable Long orderId,
-                                                                Pageable pageable) {
-        return orderService.getAllOrderItemsByOrderId(orderId, pageable);
+                                                                Pageable pageable,
+                                                                Authentication auth) {
+        return orderService.getAllOrderItemsByOrderId(orderId, pageable, auth);
     }
 
     @Operation(summary = "Get order item from order",
@@ -66,7 +68,7 @@ public class OrderController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public OrderResponseDto updateOrderStatus(@PathVariable Long id,
-                                              @RequestBody UpdateOrderStatusDto updateRequestDto) {
+                                              @RequestBody @Valid UpdateOrderStatusDto updateRequestDto) {
         return orderService.updateOrderStatus(id, updateRequestDto);
     }
 
