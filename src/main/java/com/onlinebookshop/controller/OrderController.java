@@ -4,6 +4,7 @@ import com.onlinebookshop.dto.order.OrderItemResponseDto;
 import com.onlinebookshop.dto.order.OrderRequestDto;
 import com.onlinebookshop.dto.order.OrderResponseDto;
 import com.onlinebookshop.dto.order.UpdateOrderStatusDto;
+import com.onlinebookshop.model.User;
 import com.onlinebookshop.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +33,10 @@ public class OrderController {
             description = "Retrieve user's order history")
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public List<OrderResponseDto> getAll(Pageable pageable) {
-        return orderService.getAll(pageable);
+    public List<OrderResponseDto> getAll(Pageable pageable,
+                                         Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return orderService.getAll(pageable, user.getId());
     }
 
     @Operation(summary = "Create a new order",
@@ -51,7 +54,8 @@ public class OrderController {
     public List<OrderItemResponseDto> getAllOrderItemsByOrderId(@PathVariable Long orderId,
                                                                 Pageable pageable,
                                                                 Authentication auth) {
-        return orderService.getAllOrderItemsByOrderId(orderId, pageable, auth);
+        User user = (User) auth.getPrincipal();
+        return orderService.getAllOrderItemsByOrderId(orderId, pageable, user.getId());
     }
 
     @Operation(summary = "Get order item from order",

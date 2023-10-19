@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,8 +34,8 @@ public class OrderServiceImpl implements OrderService {
     private final AuthenticationService authenticationService;
 
     @Override
-    public List<OrderResponseDto> getAll(Pageable pageable) {
-        return orderRepository.findOrderByUserId(authenticationService.getUserId()).stream()
+    public List<OrderResponseDto> getAll(Pageable pageable, Long userId) {
+        return orderRepository.findOrdersByUserId(userId).stream()
                 .map(orderMapper::toResponseDto)
                 .toList();
     }
@@ -52,27 +51,22 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Order.Status.PENDING);
         order.setTotal(calculateOrderTotal(shoppingCart));
         order.setShippingAddress(requestDto.getShippingAddress());
-        Order savedOrder = orderRepository.save(order);
-        savedOrder.setOrderItems(shoppingCart.getCartItems().stream()
+        order.setOrderItems(shoppingCart.getCartItems().stream()
                 .map(orderItemMapper::toOrderItem)
-                .peek(orderItem -> orderItem.setOrder(savedOrder))
-                .peek(this::saveOrderItemToDb)
+                .peek(orderItem -> orderItem.setOrder(order))
                 .collect(Collectors.toSet()));
+        Order savedOrder = orderRepository.save(order);
         return orderMapper.toResponseDto(savedOrder);
     }
 
     @Override
     public List<OrderItemResponseDto> getAllOrderItemsByOrderId(Long id, Pageable pageable,
-                                                                Authentication authentication) {
-        Order order = orderRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Can`t find order by id: " + id));
-        User user = (User) authentication.getPrincipal();
-        if (!order.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Current user does not have order by id: " + id);
-        }
+                                                                Long userId) {
+        Order order = orderRepository.findOrderByUserIdAndOrderId(id, userId).orElseThrow(() ->
+                 new NoSuchElementException("Can`t find order by id: " + id));
         return order.getOrderItems().stream()
                 .map(orderItemMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

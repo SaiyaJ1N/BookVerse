@@ -9,12 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 public interface OrderService {
-    List<OrderResponseDto> getAll(Pageable pageable);
+    List<OrderResponseDto> getAll(Pageable pageable, Long userId);
 
     OrderResponseDto save(OrderRequestDto requestDto);
 
     List<OrderItemResponseDto> getAllOrderItemsByOrderId(Long id, Pageable pageable,
-                                                         Authentication authentication);
+                                                         Long userId);
 
     OrderItemResponseDto getOrderItemFromOrder(Long orderId, Long itemId, Pageable pageable);
 
