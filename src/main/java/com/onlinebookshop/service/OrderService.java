@@ -6,7 +6,6 @@ import com.onlinebookshop.dto.order.OrderResponseDto;
 import com.onlinebookshop.dto.order.UpdateOrderStatusDto;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 
 public interface OrderService {
     List<OrderResponseDto> getAll(Pageable pageable, Long userId);
