@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-roles
+      author: Vitalii Kukoba
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_ADMIN
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_USER
+  - changeSet:
+      id: insert-admin-user
+      author: Vitalii Kukoba
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@example.com
+              - column:
+                  name: password
+                  value: $2a$10$9RuGtrR4xjbMm8hu29hgXO6Tcmgh8qaV9hlxz7p5gDsf29vpAo.oO
+              - column:
+                  name: first_name
+                  value: admin
+              - column:
+                  name: last_name
+                  value: admin
+  - changeSet:
+      id: insert-user-role
+      author: Vitalii Kukoba
+      preConditions:
+        - sqlCheck:
+            expectedResult: 1
+            sql: SELECT COUNT(*) FROM users WHERE email='admin@example.com'
+        - sqlCheck:
+            expectedResult: 1
+            sql: SELECT COUNT(*) FROM roles WHERE name='ROLE_ADMIN'
+      changes:
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: (SELECT id FROM users WHERE email='admin@example.com')
+              - column:
+                  name: role_id
+                  valueComputed: (SELECT id FROM roles WHERE name='ROLE_ADMIN')

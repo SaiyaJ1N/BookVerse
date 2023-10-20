@@ -1,18 +1,21 @@
 databaseChangeLog:
   - changeSet:
-      id: create-book-category-table
+      id: create-shopping-cart-table
       author: Vitalii Kukoba
       changes:
         - createTable:
-            tableName: book_category
+            tableName: shopping_cart
             columns:
               - column:
-                  name: book_id
+                  name: user_id
                   type: bigint
                   constraints:
+                    primaryKey: true
+                    references: users(id)
+                    foreignKeyName: fk_shopping_cart_user_id
                     nullable: false
               - column:
-                  name: category_id
-                  type: bigint
+                  name: is_deleted
+                  type: bit
                   constraints:
                     nullable: false

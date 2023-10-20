@@ -11,6 +11,7 @@ import com.onlinebookshop.repository.book.BookRepository;
 import com.onlinebookshop.repository.book.BookSpecificationBuilder;
 import com.onlinebookshop.service.BookService;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,12 @@ public class BookServiceImpl implements BookService {
         Optional<Book> bookById = bookRepository.findById(id);
         return bookById.map(bookMapper::toDto).orElseThrow(() ->
                 new EntityNotFoundException("Can`t find book with id: " + id));
+    }
+
+    @Override
+    public Book findBookById(Long id) {
+        return bookRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Can`t find book by id: " + id));
     }
 
     @Override
